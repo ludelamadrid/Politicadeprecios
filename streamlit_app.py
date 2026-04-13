@@ -6,7 +6,7 @@ import streamlit as st
 
 # ---------------- CONFIG ----------------
 st.set_page_config(
-    page_title="Calculadora IADT",
+    page_title="Calculadora politica de precios",
     page_icon="💊",
     layout="centered"
 )
@@ -20,7 +20,7 @@ def precios_de_venta(precios, iva, margen):
     return resultado
 
 # ---------------- UI ----------------
-st.title("💊 Calculadora de Precios IADT")
+st.title("💊 Calculadora de Precios")
 st.caption("Cálculo automático según política institucional. Carga cada valor separados por una coma")
 
 st.divider()
