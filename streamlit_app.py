@@ -1,66 +1,64 @@
 import streamlit as st
 
-import streamlit as st
-
-import streamlit as st
-
 # ---------------- CONFIG ----------------
 st.set_page_config(
-    page_title="Calculadora politica de precios",
+    page_title="Calculadora IADT",
     page_icon="💊",
     layout="centered"
 )
 
-# ---------------- FUNCION ----------------
-def precios_de_venta(precios, iva, margen):
-    resultado = []
-    for a in precios:
-        precio = a * (1 + iva/100) * (1 + margen/100)
-        resultado.append(round(precio, 2))
-    return resultado
+# ---------------- PARAMETROS ----------------
+IVA = 10.5  # fijo según política
+
+# ---------------- FUNCIONES ----------------
+def obtener_indice(precio):
+    if precio <= 11207.45:
+        return 2
+    elif precio <= 37363.25:
+        return 1.8
+    elif precio <= 149436.48:
+        return 1.6
+    elif precio <= 224154.25:
+        return 1.4
+    else:
+        return 1.3
+
+
+def calcular_precio(base):
+    indice = obtener_indice(base)
+    final = base * (1 + IVA/100) * indice
+    return round(final, 2), indice
+
 
 # ---------------- UI ----------------
-st.title("💊 Calculadora de Precios")
-st.caption("Cálculo automático según política institucional. Carga cada valor separados por una coma")
+st.title("💊 Calculadora de Precios IADT")
+st.caption("Cálculo automático según política institucional")
 
 st.divider()
 
-# Inputs principales
 entrada = st.text_area(
     "Precios sin IVA",
-    placeholder="Ej: 100, 250.5, 300"
+    placeholder="Ej: 11200, 20000, 80000"
 )
 
-col1, col2 = st.columns(2)
+st.divider()
 
-with col1:
-    iva = st.number_input("IVA (%)", value=10.5, step=0.1)
+# ---------------- CALCULO AUTOMATICO ----------------
+if entrada.strip():
+    try:
+        lista_texto = entrada.split(",")
+        precios = [float(a.strip()) for a in lista_texto]
 
-with col2:
-    margen = st.number_input("Margen (%)", value=30.0, step=0.1)
+        st.success("Resultados")
+
+        for i, base in enumerate(precios, start=1):
+            final, indice = calcular_precio(base)
+            st.text(f"Producto {i}: ${base} → ${final} (índice {indice})")
+
+    except ValueError:
+        st.error("Error: ingresá solo números separados por coma")
 
 st.divider()
 
-# Botón de cálculo
-if st.button("Calcular precios", use_container_width=True):
-
-    if not entrada.strip():
-        st.warning("Ingresá al menos un precio")
-    else:
-        try:
-            lista_texto = entrada.split(",")
-            precios = [float(a.strip()) for a in lista_texto]
-
-            resultado = precios_de_venta(precios, iva, margen)
-
-            st.success("Resultados")
-
-            for i, (base, final) in enumerate(zip(precios, resultado), start=1):
-                st.text(f"Producto {i}: ${base} → ${final}")
-
-        except ValueError:
-            st.error("Error: asegurate de ingresar solo números separados por coma")
-
-st.divider()
-
+st.caption(f"IVA aplicado automáticamente: {IVA}%")
 st.caption("Herramienta interna - uso profesional")
