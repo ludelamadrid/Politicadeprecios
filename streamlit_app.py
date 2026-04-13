@@ -43,20 +43,24 @@ entrada = st.text_area(
 
 st.divider()
 
-# ---------------- CALCULO AUTOMATICO ----------------
-if entrada.strip():
-    try:
-        lista_texto = entrada.split(",")
-        precios = [float(a.strip()) for a in lista_texto]
+# ---------------- BOTON ----------------
+if st.button("Calcular precios", use_container_width=True):
 
-        st.success("Resultados")
+    if not entrada.strip():
+        st.warning("Ingresá al menos un precio")
+    else:
+        try:
+            lista_texto = entrada.split(",")
+            precios = [float(a.strip()) for a in lista_texto]
 
-        for i, base in enumerate(precios, start=1):
-            final, indice = calcular_precio(base)
-            st.text(f"Producto {i}: ${base} → ${final} (índice {indice})")
+            st.success("Resultados")
 
-    except ValueError:
-        st.error("Error: ingresá solo números separados por coma")
+            for i, base in enumerate(precios, start=1):
+                final, indice = calcular_precio(base)
+                st.text(f"Producto {i}: ${base} → ${final} (índice {indice})")
+
+        except ValueError:
+            st.error("Error: ingresá solo números separados por coma")
 
 st.divider()
 
